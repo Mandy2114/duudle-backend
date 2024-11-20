@@ -31,7 +31,7 @@ class DrawingSerializer(serializers.ModelSerializer):
 class PredictionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Prediction
-        fields = '__all__'
+        fields = '__all__' 
 
 class GameSerializer(serializers.ModelSerializer):
   user = serializers.PrimaryKeyRelatedField(read_only=True)

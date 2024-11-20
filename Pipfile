@@ -12,6 +12,7 @@ psycopg2-binary = "*"
 requests = "*"
 pillow = "*"
 django-environ = "*"
+django-debug-toolbar = "*"
 
 [dev-packages]
 
