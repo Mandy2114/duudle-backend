@@ -1,10 +1,10 @@
-from .serializers import UserSerializer, GameSerializer, WordSerializer, DrawingSerializer, PredictionSerializer
+from .serializers import UserSerializer, GameSerializer, WordSerializer, DrawingSerializer
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework import generics, status, permissions
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.exceptions import PermissionDenied
-from .models import Game, Word, Drawing, Prediction
+from .models import Game, Word, Drawing
 from rest_framework.response import Response
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
@@ -76,6 +76,7 @@ class GameList(generics.ListCreateAPIView):
   def get_queryset(self):
     # This ensures we only return Games belonging to the logged-in user
     user = self.request.user
+    print(user)
     return Game.objects.filter(user=user)
 
 
@@ -180,129 +181,129 @@ class DrawingDetails(generics.RetrieveUpdateDestroyAPIView):
     lookup_field = 'id'
 # vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv  PREDICTIONS VIEWS  vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
 # Single Prection
-class PredictionView(APIView):
-    parser_classes = (MultiPartParser, FormParser)
+# class PredictionView(APIView):
+#     parser_classes = (MultiPartParser, FormParser)
 
-    def preprocess_image(image_file):
-      img = Image.open(image_file).convert("RGB")  # Convert to RGB (not RGBA)
-      img.thumbnail((224, 224), Image.ANTIALIAS)  # Resize to thumbnail
-      canvas = Image.new("RGB", (224, 224), (255, 255, 255))  # New RGB canvas with white background
-      offset = ((224 - img.width) // 2, (224 - img.height) // 2)  # Center the image
-      canvas.paste(img, offset)
+#     def preprocess_image(image_file):
+#       img = Image.open(image_file).convert("RGB")  # Convert to RGB (not RGBA)
+#       img.thumbnail((224, 224), Image.ANTIALIAS)  # Resize to thumbnail
+#       canvas = Image.new("RGB", (224, 224), (255, 255, 255))  # New RGB canvas with white background
+#       offset = ((224 - img.width) // 2, (224 - img.height) // 2)  # Center the image
+#       canvas.paste(img, offset)
       
-      buffer = BytesIO()
-      canvas.save(buffer, format="JPEG")  # Save as JPEG
-      return base64.b64encode(buffer.getvalue()).decode("utf-8")
+#       buffer = BytesIO()
+#       canvas.save(buffer, format="JPEG")  # Save as JPEG
+#       return base64.b64encode(buffer.getvalue()).decode("utf-8")
     
-    def call_groq_api(base64_image):
-      response = requests.post(
-        'https://api.groq.com/openai/v1/chat/completions',
-      headers={
-        "Authorization": "Bearer {GROQ_API_KEY}",
-        "Content-Type": "application/json",
-      },
-      json={
-        "model": "llama-3.2-11b-vision-preview",
-        "messages": [
-          {"role": "user", "content": [
-            {"type": "text", "text": "What does this image show?"},
-            {"type": "image_url","image_url": {"url": f"data:image/jpeg;base64,{base64_image}"}}
-          ]}
-        ],
-        "temperature": 0.1,
-      },
-      )
-      return response.json()
+#     def call_groq_api(base64_image):
+#       response = requests.post(
+#         'https://api.groq.com/openai/v1/chat/completions',
+#       headers={
+#         "Authorization": "Bearer {GROQ_API_KEY}",
+#         "Content-Type": "application/json",
+#       },
+#       json={
+#         "model": "llama-3.2-11b-vision-preview",
+#         "messages": [
+#           {"role": "user", "content": [
+#             {"type": "text", "text": "What does this image show?"},
+#             {"type": "image_url","image_url": {"url": f"data:image/jpeg;base64,{base64_image}"}}
+#           ]}
+#         ],
+#         "temperature": 0.1,
+#       },
+#       )
+#       return response.json()
 
-    def handle_prediction(request):
-      image_file = request.FILES[image] # Uploaded file
-      base64_image = preprocess_image(image_file)
-      groq_response = call_groq_api(base64_image)
-      result = process_prediction_response(groq_response, target_word=cat)
-      drawing_id = request.data.get('drawing')  # Assuming drawing ID is passed in request data
+#     def handle_prediction(request):
+#       image_file = request.FILES[image] # Uploaded file
+#       base64_image = preprocess_image(image_file)
+#       groq_response = call_groq_api(base64_image)
+#       result = process_prediction_response(groq_response, target_word=cat)
+#       drawing_id = request.data.get('drawing')  # Assuming drawing ID is passed in request data
 
-        # Fetch the Drawing object based on drawing_id
-      try:
-        drawing = Drawing.objects.get(id=drawing_id)
-      except Drawing.DoesNotExist:
-        return Response({"error": "Drawing not found."}, status=status.HTTP_404_NOT_FOUND)
+#         # Fetch the Drawing object based on drawing_id
+#       try:
+#         drawing = Drawing.objects.get(id=drawing_id)
+#       except Drawing.DoesNotExist:
+#         return Response({"error": "Drawing not found."}, status=status.HTTP_404_NOT_FOUND)
       
-      prediction = Prediction.objects.create(
-        drawing=drawing,  # Assign the valid Drawing instance
-        prediction=result['prediction']
-      )
+#       prediction = Prediction.objects.create(
+#         drawing=drawing,  # Assign the valid Drawing instance
+#         prediction=result['prediction']
+#       )
       
-      return JsonResponse(result)
+#       return JsonResponse(result)
     
-    def process_prediction_response(response, target_word):
-      prediction_text = response[choices][0][message][content]
+#     def process_prediction_response(response, target_word):
+#       prediction_text = response[choices][0][message][content]
 
-      is_correct = target_word.lower() in prediction_text.lower()
-      confidence = response.get(confidence, 0)
-      return {prediction: prediction_text, is_correct: is_correct, confidence: confidence}
+#       is_correct = target_word.lower() in prediction_text.lower()
+#       confidence = response.get(confidence, 0)
+#       return {prediction: prediction_text, is_correct: is_correct, confidence: confidence}
 
-    def post(self, request, *args, **kwargs):
-        try:
-            # Retrieve the uploaded image
-            image_file = request.FILES['image']
+#     def post(self, request, *args, **kwargs):
+#         try:
+#             # Retrieve the uploaded image
+#             image_file = request.FILES['image']
             
-            # Preprocess the image: Resize and encode to Base64
-            image = Image.open(image_file)
-            image = image.resize((224, 224))  # Resize to 224x224
-            buffer = BytesIO()
-            image.save(buffer, format="JPEG")
-            base64_image = base64.b64encode(buffer.getvalue()).decode('utf-8')
+#             # Preprocess the image: Resize and encode to Base64
+#             image = Image.open(image_file)
+#             image = image.resize((224, 224))  # Resize to 224x224
+#             buffer = BytesIO()
+#             image.save(buffer, format="JPEG")
+#             base64_image = base64.b64encode(buffer.getvalue()).decode('utf-8')
 
-            # Call the Groq API
-            groq_api_key = VITE_GROQ_API_KEY
-            groq_url = 'https://api.groq.com/openai/v1/chat/completions'
+#             # Call the Groq API
+#             groq_api_key = VITE_GROQ_API_KEY
+#             groq_url = 'https://api.groq.com/openai/v1/chat/completions'
 
-            response = requests.post(
-                groq_url,
-                headers={
-                    "Authorization": f"Bearer {groq_api_key}",
-                    "Content-Type": "application/json",
-                },
-                json={
-                    "model": "llama-3.2-11b-vision-preview",
-                    "messages": [
-                        {
-                            "role": "user",
-                            "content": [
-                                {"type": "text", "text": "What's in this image?"},
-                                {
-                                    "type": "image_url",
-                                    "image_url": {"url": f"data:image/jpeg;base64,{base64_image}"}
-                                },
-                            ]
-                        }
-                    ],
-                    "temperature": 0.1,
-                },
-            )
+#             response = requests.post(
+#                 groq_url,
+#                 headers={
+#                     "Authorization": f"Bearer {groq_api_key}",
+#                     "Content-Type": "application/json",
+#                 },
+#                 json={
+#                     "model": "llama-3.2-11b-vision-preview",
+#                     "messages": [
+#                         {
+#                             "role": "user",
+#                             "content": [
+#                                 {"type": "text", "text": "What's in this image?"},
+#                                 {
+#                                     "type": "image_url",
+#                                     "image_url": {"url": f"data:image/jpeg;base64,{base64_image}"}
+#                                 },
+#                             ]
+#                         }
+#                     ],
+#                     "temperature": 0.1,
+#                 },
+#             )
 
-            if response.status_code != 200:
-                return Response(
-                    {"error": "Failed to get prediction", "details": response.json()},
-                    status=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                )
+#             if response.status_code != 200:
+#                 return Response(
+#                     {"error": "Failed to get prediction", "details": response.json()},
+#                     status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+#                 )
 
-            # Extract prediction from Groq API response
-            prediction_text = response.json()["choices"][0]["message"]["content"]
+#             # Extract prediction from Groq API response
+#             prediction_text = response.json()["choices"][0]["message"]["content"]
 
-            # Save prediction to database (optional)
-            prediction = Prediction.objects.create(drawing=image_file, predicted_word=prediction_text)
+#             # Save prediction to database (optional)
+#             prediction = Prediction.objects.create(drawing=image_file, predicted_word=prediction_text)
 
-            # Serialize and return response
-            serializer = PredictionSerializer(prediction)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+#             # Serialize and return response
+#             serializer = PredictionSerializer(prediction)
+#             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-        except Exception as e:
-            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+#         except Exception as e:
+#             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
-  # game = models.OneToOneField(Game, on_delete=models.CASCADE, related_name='prediction')  # Link to a specific game
-  # drawing = models.ForeignKey(Drawing, on_delete=models.CASCADE, related_name='predictions')  # Link to a drawing
-  # predicted_word = models.CharField(max_length=100)  # The predicted word
-  # confidence = models.FloatField()  # Confidence score of the prediction
-  # is_correct = models.BooleanField(default=False)  # Whether the prediction matches the word
-  # created_at = 
+#   # game = models.OneToOneField(Game, on_delete=models.CASCADE, related_name='prediction')  # Link to a specific game
+#   # drawing = models.ForeignKey(Drawing, on_delete=models.CASCADE, related_name='predictions')  # Link to a drawing
+#   # predicted_word = models.CharField(max_length=100)  # The predicted word
+#   # confidence = models.FloatField()  # Confidence score of the prediction
+#   # is_correct = models.BooleanField(default=False)  # Whether the prediction matches the word
+#   # created_at = 

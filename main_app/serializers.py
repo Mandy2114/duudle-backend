@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
-from .models import Game, Drawing, Word, Prediction
+from .models import Game, Drawing, Word
 
 class UserSerializer(serializers.ModelSerializer):
   password = serializers.CharField(write_only=True)
@@ -27,11 +27,6 @@ class DrawingSerializer(serializers.ModelSerializer):
     class Meta:
         model = Drawing
         fields = '__all__'
-
-class PredictionSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Prediction
-        fields = '__all__' 
 
 class GameSerializer(serializers.ModelSerializer):
   user = serializers.PrimaryKeyRelatedField(read_only=True)
