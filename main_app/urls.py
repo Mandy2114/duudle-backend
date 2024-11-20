@@ -1,4 +1,4 @@
-from .views import Home, CreateUserView, LoginView, VerifyUserView, GameDetails, WordList, WordDetail, WordGame, GameList, DrawingList, DrawingDetails
+from .views import Home, CreateUserView, LoginView, VerifyUserView, GameDetails, WordList, WordDetail, WordGame, GameList, DrawingList, DrawingDetails, PredictionView
 from django.urls import path
 
 
@@ -14,4 +14,5 @@ urlpatterns = [
   path('words/<int:id>/games/', WordGame.as_view(), name='Word-Game'), 
   path('games/drawings/', DrawingList.as_view(), name='drawing-list'), 
   path('games/drawings/<int:id>/', DrawingDetails.as_view(), name='DrawingDetails'),
+  path('predictions/', PredictionView.as_view(), name='prediction-list'),
 ]

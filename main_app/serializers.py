@@ -28,6 +28,11 @@ class DrawingSerializer(serializers.ModelSerializer):
         model = Drawing
         fields = '__all__'
 
+class PredictionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Prediction
+        fields = '__all__'
+
 class GameSerializer(serializers.ModelSerializer):
   user = serializers.PrimaryKeyRelatedField(read_only=True)
   word = WordSerializer(many=True, read_only=True)

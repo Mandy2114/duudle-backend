@@ -1,13 +1,19 @@
-from .serializers import UserSerializer, GameSerializer, WordSerializer, DrawingSerializer
+from .serializers import UserSerializer, GameSerializer, WordSerializer, DrawingSerializer, PredictionSerializer
+from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework import generics, status, permissions
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.exceptions import PermissionDenied
+from .models import Game, Word, Drawing, Prediction
 from rest_framework.response import Response
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
 from rest_framework.views import APIView
-from .models import Game, Word, Drawing
+from dotenv import VITE_GROQ_API_KEY
+from io import BytesIO
+from PIL import Image
+import requests
+import base64
 
 
 class Home(APIView):
@@ -30,7 +36,6 @@ class CreateUserView(generics.CreateAPIView):
     'access': str(refresh.access_token),
     'user': response.data
   }) 
-
 
 class LoginView(APIView):
   permission_classes = [permissions.AllowAny]
@@ -172,4 +177,66 @@ class DrawingDetails(generics.RetrieveUpdateDestroyAPIView):
     queryset = Drawing.objects.all()
     serializer_class = DrawingSerializer
     lookup_field = 'id'
+# vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv  PREDICTIONS VIEWS  vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+# Single Prection
+class PredictionView(APIView):
+    parser_classes = (MultiPartParser, FormParser)
 
+    def post(self, request, *args, **kwargs):
+        try:
+            # Retrieve the uploaded image
+            image_file = request.FILES['image']
+            
+            # Preprocess the image: Resize and encode to Base64
+            image = Image.open(image_file)
+            image = image.resize((224, 224))  # Resize to 224x224
+            buffer = BytesIO()
+            image.save(buffer, format="JPEG")
+            base64_image = base64.b64encode(buffer.getvalue()).decode('utf-8')
+
+            # Call the Groq API
+            groq_api_key = VITE_GROQ_API_KEY
+            groq_url = "https://api.groq.com/openai/v1/chat/completions"
+
+            response = requests.post(
+                groq_url,
+                headers={
+                    "Authorization": f"Bearer {groq_api_key}",
+                    "Content-Type": "application/json",
+                },
+                json={
+                    "model": "llama-3.2-11b-vision-preview",
+                    "messages": [
+                        {
+                            "role": "user",
+                            "content": [
+                                {"type": "text", "text": "What's in this image?"},
+                                {
+                                    "type": "image_url",
+                                    "image_url": {"url": f"data:image/jpeg;base64,{base64_image}"}
+                                },
+                            ]
+                        }
+                    ],
+                    "temperature": 0.1,
+                },
+            )
+
+            if response.status_code != 200:
+                return Response(
+                    {"error": "Failed to get prediction", "details": response.json()},
+                    status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                )
+
+            # Extract prediction from Groq API response
+            prediction_text = response.json()["choices"][0]["message"]["content"]
+
+            # Save prediction to database (optional)
+            prediction = Prediction.objects.create(image=image_file, prediction=prediction_text)
+
+            # Serialize and return response
+            serializer = PredictionSerializer(prediction)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
