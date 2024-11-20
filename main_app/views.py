@@ -9,12 +9,15 @@ from rest_framework.response import Response
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
 from rest_framework.views import APIView
-from dotenv import VITE_GROQ_API_KEY
+from dotenv import load_dotenv
 from io import BytesIO
 from PIL import Image
 import requests
 import base64
+import os
 
+load_dotenv()
+VITE_GROQ_API_KEY = os.getenv("VITE_GROQ_API_KEY")
 
 class Home(APIView):
 

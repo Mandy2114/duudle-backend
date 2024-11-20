@@ -35,3 +35,14 @@ class Drawing(models.Model):
 
   def __str__(self):
     return f"Drawing id: {str(self.id)} | Game id: {str(self.game)} "
+  
+class Prediction(models.Model):
+  game = models.OneToOneField(Game, on_delete=models.CASCADE, related_name='prediction')  # Link to a specific game
+  drawing = models.ForeignKey(Drawing, on_delete=models.CASCADE, related_name='predictions')  # Link to a drawing
+  predicted_word = models.CharField(max_length=100)  # The predicted word
+  confidence = models.FloatField()  # Confidence score of the prediction
+  is_correct = models.BooleanField(default=False)  # Whether the prediction matches the word
+  created_at = models.DateTimeField(auto_now_add=True)  # Timestamp
+
+  def __str__(self):
+    return f"Prediction for Game {self.game.id}: {self.predicted_word} (Confidence: {self.confidence})"

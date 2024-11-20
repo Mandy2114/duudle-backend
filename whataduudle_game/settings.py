@@ -14,7 +14,7 @@ from pathlib import Path
 import environ
 
 env = environ.Env()
-environ.env.read_env()
+environ.Env.read_env()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -23,8 +23,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-DATABASE_URL=env('DATABASE_URL')
-SECRET_KEY = env('SECRET_KEY')
+# DATABASE_URL=env('DATABASE_URL')
+SECRET_KEY ='django-insecure-5_!_8l&t4asy-hdk-b27hr$fiks8%b7*ygz#i$wql@-r*zufi='
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -72,7 +72,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'main_app',
     'corsheaders',
-    'Pillow',
+    'PIL',
     'dotenv',
     'requests',
 ]
