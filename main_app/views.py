@@ -168,30 +168,50 @@ class WordGame(generics.CreateAPIView):
 # vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv  DRAWING VIEWS  vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
 # List out all the Drawings | games/<int:id>/drawings/
 class DrawingList(generics.ListCreateAPIView):
-  queryset = Drawing.objects.all()
   serializer_class = DrawingSerializer
 
-  def post(self, request, *args, **kwargs):
-    # Get the game_id from the URL
-    game_id = kwargs.get('id') 
-    try:
-        # Fetch the Game object based on game_id
-        game = Game.objects.get(id=game_id)
-    except Game.DoesNotExist:
-        return Response({"error": "Game not found."}, status=status.HTTP_404_NOT_FOUND)
-    # Create the drawing data and automatically set the game field
-    drawing_data = request.data.copy()  
-    drawing_data['game'] = game.id   # Automatically set the game from the URL
-    
-    # Serialize and validate the data
-    serializer = self.get_serializer(data=drawing_data)
-    serializer.is_valid(raise_exception=True)
-    self.perform_create(serializer)
+  def get_queryset(self):
+      game_id = self.kwargs.get('game_id')
+      return Drawing.objects.filter(game_id=game_id)
 
-    return Response(serializer.data, status=status.HTTP_201_CREATED)
+  def perform_create(self, serializer):
+      game_id = self.kwargs.get('game_id')
+      serializer.save(game_id=game_id)
+
+  def post(self, request, *args, **kwargs):
+      try:
+          game_id = self.kwargs.get('game_id')
+            # Add game_id to request data
+          request.data['game'] = game_id
+          return super().post(request, *args, **kwargs)
+      except Exception as e:
+          return Response(
+              {"error": str(e)},
+              status=status.HTTP_500_INTERNAL_SERVER_ERROR
+          )
+
 # Retreive, Update and Delete Drawings | 'games/<int:game_id>/drawings/<int:id>/'
 class DrawingDetails(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Drawing.objects.all()
-    serializer_class = DrawingSerializer
-    lookup_field = 'id'
+  serializer_class = DrawingSerializer
+  lookup_field = 'pk'  # This should match the URL parameter name
+
+  def get_queryset(self):
+      game_id = self.kwargs.get('game_id')
+      return Drawing.objects.filter(game_id=game_id)
+
+  def update(self, request, *args, **kwargs):
+      try:
+          instance = self.get_object()
+          serializer = self.get_serializer(instance, data=request.data, partial=True)
+            
+          if serializer.is_valid():
+              self.perform_update(serializer)
+              return Response(serializer.data)
+          return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            
+      except Exception as e:
+          return Response(
+              {"error": str(e)},
+              status=status.HTTP_500_INTERNAL_SERVER_ERROR
+          )
 

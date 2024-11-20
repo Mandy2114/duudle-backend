@@ -2,6 +2,7 @@ from django.contrib.auth.models import User
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver 
 from django.db import models
+from django.utils import timezone
 
 
 DIFFICULTY_CHOICES = (
@@ -40,11 +41,16 @@ class Game(models.Model):
     super().delete(*args, **kwargs)
 
 class Drawing(models.Model):
-  game = models.OneToOneField(Game, on_delete=models.CASCADE)
+  game = models.ForeignKey(Game, related_name='drawings', on_delete=models.CASCADE)
   art = models.TextField()
+  created_at = models.DateTimeField(auto_now_add=True)
 
   def __str__(self):
-    return f"Drawing with id: {str(self.id)}"
+      return f"Drawing {self.id} for game {self.game_id}"
+
+  class Meta:
+      ordering = ['-created_at']
+
 
 @receiver(pre_delete, sender=User)
 def cleanup_user_games(sender, instance, **kwargs):

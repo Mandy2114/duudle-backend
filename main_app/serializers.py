@@ -26,7 +26,12 @@ class WordSerializer(serializers.ModelSerializer):
 class DrawingSerializer(serializers.ModelSerializer):
     class Meta:
         model = Drawing
-        fields = '__all__'
+        fields = ['id', 'game', 'art', 'created_at']
+        read_only_fields = ['created_at']
+        extra_kwargs = {
+            'game': {'required': True} 
+        }
+
 
 class GameSerializer(serializers.ModelSerializer):
   user = serializers.PrimaryKeyRelatedField(read_only=True)

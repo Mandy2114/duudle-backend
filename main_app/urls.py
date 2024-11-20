@@ -16,4 +16,6 @@ urlpatterns = [
   path('words/<int:id>/games/', WordGame.as_view(), name='Word-Game'), 
   path('games/drawings/', DrawingList.as_view(), name='drawing-list'), 
   path('games/drawings/<int:id>/', DrawingDetails.as_view(), name='DrawingDetails'),
+  path('games/<int:game_id>/drawings/', DrawingList.as_view(), name='drawing-list'), 
+  path('games/<int:game_id>/drawings/<int:pk>/', DrawingDetails.as_view(), name='DrawingDetails'),
 ]
