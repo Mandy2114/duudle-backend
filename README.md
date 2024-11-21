@@ -66,11 +66,25 @@
 
 #### WireFrame
 
+<<<<<<< HEAD
 ![alt text](./README.Images/README-homepage.png)
 ![alt text](./README.Images/README-game-start.png)
 ![alt text](./README.Images/README-draw.png)
 ![alt text](./README.Images/README-signin-register.png)
 ![alt text](./README.Images/README-prompt-win-lose.png)
+=======
+![alt text](/README.Images/README-whataduudle!.png)
+Home Page
+![alt text](/README.Images/README-homepage.png)
+Start Game
+![alt text](/README.Images/README-game-start.png)
+Darwing
+![alt text](/README.Images/README-draw.png)
+Register
+![alt text](/README.Images/README-signin-register.png)
+Prompt
+![alt text](/README.Images/README-prompt-win-lose.png)
+>>>>>>> f2ec17f309c16694ec7dbafdb4141f604e2383dc
 
 #### Color Palette
 
@@ -157,6 +171,7 @@
 
 **Visit the [Trello board](https://trello.com/b/RlAy2kky/pics)**
 
+<<<<<<< HEAD
 Our Trello Board was really important
 
 We used this as a way to organize our information, models, ideas and more. Allowing for a much more organized workflow.
@@ -210,6 +225,12 @@ We used this as a way to organize our information, models, ideas and more. Allow
 </details>
 </br>
 
+=======
+MVP
+![alt text](./README.Images/README-MVP.png)
+POST MVP
+![alt text](./README.Images/README-POST-MVP.png)
+>>>>>>> f2ec17f309c16694ec7dbafdb4141f604e2383dc
 **User**
 
 - **Id:** The identification number of a user. This is an auto-created field.
