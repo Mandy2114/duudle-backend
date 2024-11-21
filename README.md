@@ -138,6 +138,28 @@ Welcome to _whataduudle_ django project!
 
 ### BACK-END
 
+#### Set-Up
+
+1. Clone the repo
+1. Run command
+   `pipenv shell`
+   and install the dependences...
+   `pipenv install`
+1. Create the Databases using this command. Make sure to uncomment the lines shown...
+   `psql -f create-database.sql`
+   [Create Database commands](/README.Images/CreateDataBaseCommand.png "MVP ERD")
+   Image of CREATE DATABASE
+1. Once Created run these commands to make migrations for the models.
+   `python manage.py makemigrations`
+   `python manage.py migrate`
+   1. To see if migrations were succussful use the command...
+      `python manage.py showmigrationss `
+1. Run the server
+   `python manage.py runserver`
+1. Create An Admin for your database
+   `python manage.py createsuperuser`
+   1. Fill out the username and password of your choosing. (Email field can be left blank).
+
 #### ERD
 
 ![alt text](./README.Images/README-MVP.png)

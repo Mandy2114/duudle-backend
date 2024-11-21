@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/5.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
-import environ  
+import environ
 import dj_database_url
 import django_heroku
 
@@ -20,7 +20,6 @@ env = environ.Env()
 environ.Env.read_env()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
@@ -74,7 +73,10 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt',
     'main_app',
-    'corsheaders'
+    'corsheaders',
+    'PIL',
+    'dotenv',
+    'requests',
 ]
 
 MIDDLEWARE = [
@@ -142,6 +144,11 @@ WSGI_APPLICATION = 'whataduudle_game.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
+# DATABASES = {
+#     'default': 
+#         dj_database_url.config('DATABASE_URL')
+    
+# }
 DATABASES = {
     'default': 
         dj_database_url.config('DATABASE_URL')
