@@ -55,7 +55,7 @@
    `pipenv install`
 1. Create the Databases using this command. Make sure to uncomment the lines shown...
    `psql -f create-database.sql`
-   [Create Database commands](README.Images/CreateDataBaseCommand.png "MVP ERD")
+   [Create Database commands](/README.Images/CreateDataBaseCommand.png "MVP ERD")
    Image of CREATE DATABASE
 1. Once Created run these commands to make migrations for the models.
    `python manage.py makemigrations`
