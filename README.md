@@ -1,12 +1,8 @@
-<<<<<<< HEAD
-# **_Whataduudle_**
-=======
 # **🤖 WHATADUUDLE! ✏️**
 
 ![alt text](./README.Images/README-whataduudle!.png)
 
 ## Welcome to _whataduudle_ django project!
->>>>>>> f2a7134a9148005dab5f78cebf584e338165f67a
 
 ## Project Created By
 
@@ -55,26 +51,6 @@
 
 ## USER STORIES
 
-<<<<<<< HEAD
-1. As a User (AAU), I want to be able to sign up for an account if I choose to.
-2. AAU, I want to be able to sign in and sign out.
-3. AAU, I want to be able to see a landing page.
-4. AAU, when the game is won or lost, I want to be able to replay.
-5. AAU, I want to be able to draw my prompt.
-6. AAU, I want to be able to clear my drawing.
-7. AAU, I want to see the prompt and word while I am drawing.
-8. AAU, I want to see the timer, how much time I have left, and the prompt while I am drawing.
-9. AAU, I want a fast and exciting round lasting 20–40 seconds.
-
-#### WireFrame
-
-![alt text](/README.Images/README-whataduudle!.png)
-![alt text](/README.Images/README-homepage.png)
-![alt text](/README.Images/README-game-start.png)
-![alt text](/README.Images/README-draw.png)
-![alt text](/README.Images/README-signin-register.png)
-![alt text](/README.Images/README-prompt-win-lose.png)
-=======
 - AAU I want to be able to sign-up for an account if wanted
 - AAU I want to be able to sign-in and out.
 - AAU I want to be able to see a landing page.
@@ -95,7 +71,6 @@
 ![alt text](./README.Images/README-draw.png)
 ![alt text](./README.Images/README-signin-register.png)
 ![alt text](./README.Images/README-prompt-win-lose.png)
->>>>>>> f2a7134a9148005dab5f78cebf584e338165f67a
 
 #### Color Palette
 
@@ -264,13 +239,7 @@ We used this as a way to organize our information, models, ideas and more. Allow
 
 ### Routes/Paths
 
-<<<<<<< HEAD
-![alt text](/README.Images/README-Routes.png)
-
-# API Endpoints Documentation
-=======
 <img src="./README.Images/README-Routes.png" alt="Routes Visual" width=850/>
->>>>>>> f2a7134a9148005dab5f78cebf584e338165f67a
 
 ## User Endpoints
 
@@ -421,50 +390,21 @@ We used this as a way to organize our information, models, ideas and more. Allow
 
 #### WordList(generics.ListCreateAPIView)
 
-<<<<<<< HEAD
-- **Purpose:** (GET)/(POST) The list of all words and create a word.
-=======
 - **Purpose:** The List of Words
 - **Request:** (POST)
->>>>>>> f2a7134a9148005dab5f78cebf584e338165f67a
 
 #### WordDetail(generics.RetrieveUpdateDestroyAPIView)
 
-<<<<<<< HEAD
-- **Purpose:** (GET)/(POST)/(DELETE) Get a single word and its details.
-=======
 - **Purpose:** A single word's details.
 - **Request:** (GET)(PUT)/(DELETE)
->>>>>>> f2a7134a9148005dab5f78cebf584e338165f67a
 
 #### WordGame(generics.CreateAPIView)
 
-<<<<<<< HEAD
-- **Purpose:** (POST) Creates game for user with the retrieved word.
-=======
 - **Purpose:** Creates a Game with a word attached to it. **(START GAME)**
 - **Request:** (POST)
->>>>>>> f2a7134a9148005dab5f78cebf584e338165f67a
 
 #### DrawingList(generics.ListCreateAPIView)
 
-<<<<<<< HEAD
-- **Purpose** (GET)/(POST) The list of words.
-
-## DrawingDetails(generics.RetrieveUpdateDestroyAPIView)
-
-- **Purpose** (GET)/(PUT)/(DELETE) Get a single word.
-
-### Post-MVP
-
-1. AAU, I want a different color to draw with.
-2. AAU, I want an eraser button.
-3. AAU, I want a difficulty option.
-4. AAU, I want an undo button.
-5. AAU, I want a high-score leaderboard.
-6. AAU, I want multiple modes.
-7. AAU, I want both a redo and an undo button.
-=======
 - **Purpose:** List of Drawings
 - **Request:** (POST)(POST)
 
@@ -472,4 +412,3 @@ We used this as a way to organize our information, models, ideas and more. Allow
 
 - **Purpose:** Details of a Drawing.
 - **Request:** (POST)(PUT)(DELETE)
->>>>>>> f2a7134a9148005dab5f78cebf584e338165f67a

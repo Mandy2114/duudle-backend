@@ -200,8 +200,4 @@ class DrawingList(generics.ListCreateAPIView):
 class DrawingDetails(generics.RetrieveUpdateDestroyAPIView):
     queryset = Drawing.objects.all()
     serializer_class = DrawingSerializer
-<<<<<<< HEAD
     lookup_field = 'id'
-=======
-    lookup_field = 'id'
->>>>>>> f2a7134a9148005dab5f78cebf584e338165f67a
