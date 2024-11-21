@@ -57,10 +57,15 @@ Welcome to _whataduudle_ django project!
 #### WireFrame
 
 ![alt text](/README.Images/README-whataduudle!.png)
+Home Page
 ![alt text](/README.Images/README-homepage.png)
+Start Game
 ![alt text](/README.Images/README-game-start.png)
+Darwing
 ![alt text](/README.Images/README-draw.png)
+Register
 ![alt text](/README.Images/README-signin-register.png)
+Prompt
 ![alt text](/README.Images/README-prompt-win-lose.png)
 
 #### Color Palette
@@ -148,8 +153,9 @@ Welcome to _whataduudle_ django project!
 
 #### ERD
 
+MVP
 ![alt text](./README.Images/README-MVP.png)
-
+POST MVP
 ![alt text](./README.Images/README-POST-MVP.png)
 **User**
 
