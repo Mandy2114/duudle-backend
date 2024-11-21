@@ -65,12 +65,12 @@
 ![alt text](./README.Images/README-homepage.png)
 ![alt text](./README.Images/README-game-start.png)
 ![alt text](./README.Images/README-draw.png)
-![alt text](./README.Images/README-signin-register.png)
+![alt text](./README.Images/README-signin-register%20.png)
 ![alt text](./README.Images/README-prompt-win-lose.png)
 
 #### Color Palette
 
-![alt text](./README.Images/READEM-color-palette.png)
+![alt text](./README.Images/README-color-palette.png)
 
 ```javascript
   theme: {
@@ -236,6 +236,11 @@ We used this as a way to organize our information, models, ideas and more. Allow
 ### Routes/Paths
 
 <img src="./README.Images/README-Routes.png" alt="Routes Visual" width=850/>
+
+<details>
+<summary> WEBSITE FLOW </summary>
+<img src="./README.Images/Website Flow.png" alt="Routes Visual" width=850/>
+</details>
 
 ## User Endpoints
 
