@@ -3,6 +3,7 @@ from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework import generics, status, permissions
 from rest_framework.permissions import IsAuthenticated
+from django.contrib.auth import authenticate, logout
 from rest_framework.exceptions import PermissionDenied
 from .models import Game, Word, Drawing
 from rest_framework.response import Response
@@ -57,6 +58,27 @@ class LoginView(APIView):
       })
     return Response({'error': 'Invalid Credentials'}, status=status.HTTP_401_UNAUTHORIZED)
   
+class LogoutView(APIView):
+    def post(self, request):
+        if request.user.is_authenticated:
+            # Clean up user's unfinished games
+            Game.objects.filter(
+                user=request.user,
+                result=False
+            ).delete()
+            
+        logout(request)
+        return Response(status=status.HTTP_200_OK)
+    def post(self, request):
+        if request.user.is_authenticated:
+            # Clean up user's unfinished games
+            Game.objects.filter(
+                user=request.user,
+                result=False
+            ).delete()
+            
+        logout(request)
+        return Response(status=status.HTTP_200_OK)
 
 class VerifyUserView(APIView):
   permission_classes = [permissions.IsAuthenticated]
@@ -179,3 +201,4 @@ class DrawingDetails(generics.RetrieveUpdateDestroyAPIView):
     queryset = Drawing.objects.all()
     serializer_class = DrawingSerializer
     lookup_field = 'id'
+
