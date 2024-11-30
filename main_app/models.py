@@ -1,4 +1,6 @@
 from django.contrib.auth.models import User
+from django.db.models.signals import pre_delete
+from django.dispatch import receiver 
 from django.db import models
 
 
@@ -28,10 +30,22 @@ class Game(models.Model):
   def __str__(self): 
     word = self.word.first()
     return f"{word.prompt} | {self.result}"
+  
+  def delete(self, *args, **kwargs):
+    try:
+      if hasattr(self, 'drawing'):
+        self.drawing.delete()
+    except Drawing.DoesNotExist:
+      pass
+    super().delete(*args, **kwargs)
 
 class Drawing(models.Model):
   game = models.OneToOneField(Game, on_delete=models.CASCADE)
   art = models.TextField()
 
   def __str__(self):
-    return f"Drawing id: {str(self.id)} | Game id: {str(self.game)} "
+    return f"Drawing with id: {str(self.id)}"
+
+@receiver(pre_delete, sender=User)
+def cleanup_user_games(sender, instance, **kwargs):
+  Game.objects.filter(user=instance).delete()

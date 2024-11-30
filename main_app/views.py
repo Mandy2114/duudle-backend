@@ -1,14 +1,25 @@
 from .serializers import UserSerializer, GameSerializer, WordSerializer, DrawingSerializer
+from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework import generics, status, permissions
 from rest_framework.permissions import IsAuthenticated
+from django.contrib.auth import authenticate, logout
 from rest_framework.exceptions import PermissionDenied
+from .models import Game, Word, Drawing
 from rest_framework.response import Response
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
 from rest_framework.views import APIView
-from .models import Game, Word, Drawing
+from django.http import JsonResponse
+from dotenv import load_dotenv
+from io import BytesIO
+from PIL import Image
+import requests
+import base64
+import os
 
+load_dotenv()
+VITE_GROQ_API_KEY = os.getenv("VITE_GROQ_API_KEY")
 
 class Home(APIView):
 
@@ -31,7 +42,6 @@ class CreateUserView(generics.CreateAPIView):
     'user': response.data
   }) 
 
-
 class LoginView(APIView):
   permission_classes = [permissions.AllowAny]
 
@@ -48,6 +58,27 @@ class LoginView(APIView):
       })
     return Response({'error': 'Invalid Credentials'}, status=status.HTTP_401_UNAUTHORIZED)
   
+class LogoutView(APIView):
+    def post(self, request):
+        if request.user.is_authenticated:
+            # Clean up user's unfinished games
+            Game.objects.filter(
+                user=request.user,
+                result=False
+            ).delete()
+            
+        logout(request)
+        return Response(status=status.HTTP_200_OK)
+    def post(self, request):
+        if request.user.is_authenticated:
+            # Clean up user's unfinished games
+            Game.objects.filter(
+                user=request.user,
+                result=False
+            ).delete()
+            
+        logout(request)
+        return Response(status=status.HTTP_200_OK)
 
 class VerifyUserView(APIView):
   permission_classes = [permissions.IsAuthenticated]
@@ -67,6 +98,7 @@ class GameList(generics.ListCreateAPIView):
   def get_queryset(self):
     # This ensures we only return Games belonging to the logged-in user
     user = self.request.user
+    print(user)
     return Game.objects.filter(user=user)
 
 
@@ -100,10 +132,8 @@ class GameDetails(generics.RetrieveUpdateDestroyAPIView):
         # If word_id is provided, handle word update and difficulty assignment
         try:
             word = Word.objects.get(id=word_id)
-            
             # Update the game's associated word
             game.word.set([word])
-            
             # Automatically update the game's difficulty to match the word's difficulty
             game.difficulty = word.difficulty
             game.result = False
@@ -138,7 +168,6 @@ class WordGame(generics.CreateAPIView):
 
   def perform_create(self, serializer):
     user = self.request.user
-    
     word_id = self.kwargs['id']
     word = Word.objects.get(pk=word_id)
     game_difficulty = word.difficulty
